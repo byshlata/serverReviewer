@@ -11,7 +11,7 @@ import {
     ReviewUserTableType,
     SearchQueryParamsType,
     SearchResponseType,
-    StarType, UserResponseType
+    StarType,
 } from "../../types";
 import express, { Request } from "express";
 import { ErrorMessage, Path, QueryAPI } from '../../enums'
