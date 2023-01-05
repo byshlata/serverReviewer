@@ -1,8 +1,14 @@
-import { DataReviewType, Empty, ResponseAppType } from "types";
+import {
+    AppSettingsResponseType,
+    DataReviewType,
+    Empty,
+    ErrorResponseType,
+    ResponseAppType
+} from "types";
 import express, { Request } from "express";
 import { ErrorMessage, Path } from '../../enums'
-import { checkAuth, createAppSettingsAndUserSend, } from "../../utils";
-import { addTagsAppSettings, editReview } from "../repository";
+import { checkAuth, } from "../../utils";
+import { addTagsAppSettings, editReview, getAppSetting } from "../repository";
 
 require("dotenv").config();
 
@@ -12,7 +18,7 @@ const router = express.Router();
 
 const singleUpload = UploadFileAmazonCloud(process.env.AWS_PUBLIC_BUCKET_ARTICLE_IMG).single('file')
 
-router.post<Empty, ResponseAppType<Empty>, Empty>(`${Path.Root}`, singleUpload, checkAuth, async (req: Request<Empty, Empty, DataReviewType & { idReview: string }, Empty> & { file: any }, res) => {
+router.post<Empty, AppSettingsResponseType | ErrorResponseType, Empty>(`${Path.Root}`, singleUpload, checkAuth, async (req: Request<Empty, Empty, DataReviewType & { idReview: string }, Empty> & { file: any }, res) => {
         try {
             const payload = req.body
             await addTagsAppSettings(payload.tags.split(','))
@@ -29,9 +35,9 @@ router.post<Empty, ResponseAppType<Empty>, Empty>(`${Path.Root}`, singleUpload, 
             } else {
                 await editReview(payload)
             }
-            const { user, appSettings } = await createAppSettingsAndUserSend(req.body.id)
+            const appSettings = await getAppSetting()
 
-            return res.status(200).send({ appSettings, user });
+            return res.status(200).send({ appSettings });
         } catch
             (error) {
             console.log(error.message)
