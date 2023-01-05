@@ -35,6 +35,7 @@ router.post<Empty, ResponseAppType<Empty>, Empty>(`${Path.Root}`, singleUpload, 
         } catch
             (error) {
             console.log(error.message)
+            console.log(error)
             return res.status(401).send({ message: ErrorMessage.ServerError })
         }
     }
