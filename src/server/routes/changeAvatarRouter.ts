@@ -10,12 +10,15 @@ const singleUpload = UploadFileAmazonCloud(process.env.AWS_PUBLIC_BUCKET_AVATAR_
 
 router.post<Empty, ResponseAppType<Empty>, IdType, Empty>(`${Path.Root}`, singleUpload, checkAuth, async (req: any, res) => {
     try {
+        const { id }= req.body
         if (req.file) {
             await singleUpload(req, res, async function (err, some) {
                 if (req.file?.location) {
-                    const { user, appSettings } = await createAppSettingsAndUserSend(req.body.id)
+                    const userBase = await changeUser(id, { avatar: req.file.location })
+                    const { user, token } = createTokenAndUserSend(userBase)
+                    const appSettings = await getAppSetting()
 
-                    return res.status(200).send({
+                    return res.cookie(Secret.NameToken, token, createCookieOption()).status(200).send({
                         user,
                         appSettings
                     });
