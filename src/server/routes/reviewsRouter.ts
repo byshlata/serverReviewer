@@ -11,38 +11,45 @@ import express, { Request } from "express";
 import { ErrorMessage, Path, QueryAPI } from '../../enums'
 import { getAppSetting, searchByTag, sortByData, sortByRating } from "../repository";
 import { createReviewSendShort } from "../../utils";
+import { ReviewsGetType } from "types/ReviewsGetType";
 
 const router = express.Router();
 
-router.get<Empty, ReviewsSomeSendType<ReviewSendShortType> & AppSettingsResponseType | ErrorResponseType, IdType, Empty>(`${Path.Root}`, async (req: Request<Empty, Empty, IdType, SortQueryParamsType>, res) => {
+router.get<Empty, ReviewsGetType<ReviewSendShortType[]> & AppSettingsResponseType | ErrorResponseType, IdType, Empty>(`${Path.Root}`, async (req: Request<Empty, Empty, IdType, SortQueryParamsType>, res) => {
         try {
             const { query } = req
-            let reviewsSortData = [];
-            let reviewsSortRating = [];
-            let reviewsTag = [];
+            let reviewsSortDataBase = [];
+            let reviewsSortRatingBase = [];
+            let reviewsTagBase = [];
             if (query[QueryAPI.Data]) {
-                reviewsSortData = await sortByData({
+                reviewsSortDataBase = await sortByData({
                     count: query[QueryAPI.Count],
                     sort: query[QueryAPI.Data]
                 })
             }
 
             if (query[QueryAPI.Rating]) {
-                reviewsSortRating = await sortByRating({
+                reviewsSortRatingBase = await sortByRating({
                     count: query[QueryAPI.Count],
                     sort: query[QueryAPI.Rating]
                 })
             }
 
             if (query[QueryAPI.Tag]) {
-                reviewsTag = await searchByTag(query[QueryAPI.Tag])
+                reviewsTagBase = await searchByTag(query[QueryAPI.Tag])
             }
 
-            const reviewSortBase = [...reviewsSortData, ...reviewsSortRating, ...reviewsTag]
-            const reviews = reviewSortBase.map(review => createReviewSendShort(review))
+            const reviewsSortData = reviewsSortDataBase.map(review => createReviewSendShort(review))
+            const reviewsSortRating = reviewsSortRatingBase.map(review => createReviewSendShort(review))
+            const reviewsTag = reviewsTagBase.map(review => createReviewSendShort(review))
             const appSettings = await getAppSetting()
 
-            return res.send({ appSettings, reviews });
+            return res.send({
+                appSettings,
+                reviewsSortData,
+                reviewsSortRating,
+                reviewsTag
+            });
         } catch
             (error) {
             return res.status(401).send({ message: ErrorMessage.ServerError })
