@@ -15,6 +15,7 @@ const singleUpload = UploadFileAmazonCloud(process.env.AWS_PUBLIC_BUCKET_ARTICLE
 router.post<Empty, ResponseAppType<Empty>, Empty>(`${Path.Root}`, singleUpload, checkAuth, async (req: Request<Empty, Empty, DataReviewType & { idReview: string }, Empty> & { file: any }, res) => {
         try {
             const payload = req.body
+            await addTagsAppSettings(payload.tags.split(','))
             if (req.file) {
                 await singleUpload(req, res, async function (err) {
                     if (req.file?.location) {
@@ -28,12 +29,12 @@ router.post<Empty, ResponseAppType<Empty>, Empty>(`${Path.Root}`, singleUpload, 
             } else {
                 await editReview(payload)
             }
-            await addTagsAppSettings(payload.tags.split(','))
             const { user, appSettings } = await createAppSettingsAndUserSend(req.body.id)
 
             return res.status(200).send({ appSettings, user });
         } catch
             (error) {
+            console.log(error.message)
             return res.status(401).send({ message: ErrorMessage.ServerError })
         }
     }
