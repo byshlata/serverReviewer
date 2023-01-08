@@ -34,7 +34,6 @@ router.post<Empty, ResponseAppType<Empty>, LoginType, Empty>(`${Path.Root}`, log
             })
 
     } catch (error) {
-        console.log(error)
         return res.status(500).send({ message: ErrorMessage.EmailOrPassword })
     }
 });
