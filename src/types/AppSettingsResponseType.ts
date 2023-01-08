@@ -1,4 +1,4 @@
-import { AppSettingsSendType } from "./AppSettingsSendType"
+import { AppSettingsSendType } from "types"
 
 export type AppSettingsResponseType = {
     appSettings: AppSettingsSendType

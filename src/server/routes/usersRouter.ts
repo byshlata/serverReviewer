@@ -36,6 +36,7 @@ router.get<Empty, ResponseAppType<UsersSomeSendType<AdminTableType>> | ErrorResp
             });
         } catch
             (error) {
+
             return res.status(401).send({ message: ErrorMessage.ServerError })
         }
     }
@@ -55,6 +56,7 @@ router.post<Empty, ResponseAppType<UsersSomeSendType<AdminTableType>>, IdSomeTyp
             })
         } catch
             (error) {
+
             return res.status(401).send({ message: ErrorMessage.ServerError })
         }
     }
@@ -75,6 +77,7 @@ router.post<Empty, ResponseAppType<UsersSomeSendType<AdminTableType>>, IdSomeTyp
             })
         } catch
             (error) {
+
             return res.status(401).send({ message: ErrorMessage.ServerError })
         }
     }
@@ -95,6 +98,7 @@ router.delete<Empty, ResponseAppType<UsersSomeSendType<AdminTableType>>, IdSomeT
             });
         } catch
             (error) {
+
             return res.status(401).send({ message: ErrorMessage.ServerError })
         }
     }

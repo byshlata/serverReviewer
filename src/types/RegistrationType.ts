@@ -1,4 +1,4 @@
-import { LoginType } from "types/LoginType";
+import { LoginType } from "types";
 
 export type RegistrationType = LoginType & {
     login: string,

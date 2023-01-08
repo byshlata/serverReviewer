@@ -1,4 +1,4 @@
-import { QueryAPI } from "../enums"
+import { QueryAPI } from "enums"
 
 export type SearchQueryParamsType = {
     [QueryAPI.Search]: string,

@@ -1,12 +1,17 @@
 import { AppSettingsServerType, } from "types";
-import { changeNameTags, createCategory, throwError } from "../../utils"
-import { AppSettings } from "../../models";
+import {
+    changeNameTags,
+    changeNewTagsByEdit,
+    createCategory,
+    throwError
+} from "../../utils"
+import { AppSettings, Review } from "../../models";
 import { AppSettingsEnum } from "../../enums";
 
 export const getAppSetting = async (): Promise<AppSettingsServerType> => {
     try {
         const appSettings = await AppSettings.findOne({ name: AppSettingsEnum.AppSettings });
-         if (appSettings) {
+        if (appSettings) {
 
             return await appSettings
         } else {
@@ -23,7 +28,7 @@ export const addCategoryAppSettings = async (category: string): Promise<AppSetti
     try {
         const appSettings = await AppSettings.findOne({ name: AppSettingsEnum.AppSettings });
         const categoryByType = createCategory(category)
-        appSettings.category = Array.from(new Set([ ...appSettings.category, categoryByType ]))
+        appSettings.category = Array.from(new Set([...appSettings.category, categoryByType]))
 
         return await appSettings.save()
     } catch (error) {
@@ -35,7 +40,20 @@ export const addTagsAppSettings = async (tags: string[]): Promise<AppSettingsSer
     try {
         const tagsForBase = changeNameTags(tags)
         const appSettings = await AppSettings.findOne({ name: AppSettingsEnum.AppSettings });
-        appSettings.tags = Array.from([ ...appSettings.tags, ...tagsForBase ])
+        appSettings.tags = [...appSettings.tags, ...tagsForBase]
+
+        return await appSettings.save()
+    } catch (error) {
+        throwError()
+    }
+}
+
+export const addTagsAppSettingsEdit = async (tags: string[], idReview): Promise<AppSettingsServerType> => {
+    try {
+        const tagsForBase = changeNameTags(tags)
+        const appSettings = await AppSettings.findOne({ name: AppSettingsEnum.AppSettings });
+        const reviewBase = await Review.findById({ _id: idReview });
+        appSettings.tags = [...tagsForBase, ...changeNewTagsByEdit(appSettings.tags, reviewBase.tags)]
 
         return await appSettings.save()
     } catch (error) {

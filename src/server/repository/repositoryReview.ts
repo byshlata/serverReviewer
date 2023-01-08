@@ -20,6 +20,7 @@ import { setRating } from "../../server/repository";
 
 export const getReviewsById = async (id: string): Promise<ReviewServerType> => {
     try {
+
         return await Review.findById({ _id: id }).populate('author').populate('comments.author');
     } catch (error) {
         throwError()
@@ -45,13 +46,12 @@ export const createReview = async ({
             authorAssessment,
             titleAbout,
             titleMain,
-            tags,
             category,
             ratingLike,
             ratingStar,
             reviewText,
         })
-        review.tags = changeNameTags(tags.split(','));
+        review.tags = changeNameTags(tags.split(','))
 
         return await review.save()
     } catch (error) {
@@ -128,6 +128,7 @@ export const searchByReview = async (searchText: string): Promise<{ titleMain: s
 
 export const searchByTag = async (tag: string): Promise<ReviewServerType[]> => {
     try {
+
         return await Review.find({ tags: { $in: [tag] } }).populate('author')
     } catch (error) {
         throwError()
@@ -136,8 +137,8 @@ export const searchByTag = async (tag: string): Promise<ReviewServerType[]> => {
 
 export const getReviewsUser = async (id: string): Promise<ReviewServerType[]> => {
     try {
-        return await Review.find({ author: id })
 
+        return await Review.find({ author: id })
     } catch (error) {
         throwError()
     }
@@ -159,6 +160,7 @@ export const deleteSomeReviews = async ({
         appSettingsTags.tags = tagsApp
         appSettingsTags.save()
         await Review.deleteMany({ _id: { $in: idSome } })
+
         return await getReviewsUser(id)
     } catch (error) {
         throwError()
@@ -177,6 +179,7 @@ export const addComment = async ({
         })
         const review = await Review.findById({ _id: idReview }).populate('author').populate('comments.author')
         review.comments.push(newComment)
+
         return await review.save()
     } catch (error) {
         throwError()
@@ -199,6 +202,7 @@ export const setLike = async ({
             review.ratingLike.countLike += 1;
             await setRating({ idUser: review.author._id, value: 1 })
         }
+
         return await review.save()
     } catch (error) {
         throwError()

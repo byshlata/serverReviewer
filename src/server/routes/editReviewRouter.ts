@@ -1,14 +1,8 @@
-import {
-    AppSettingsResponseType,
-    DataReviewType,
-    Empty,
-    ErrorResponseType,
-    ResponseAppType
-} from "types";
+import { DataReviewType, Empty, ResponseAppType } from "types";
 import express, { Request } from "express";
 import { ErrorMessage, Path } from '../../enums'
-import { checkAuth, } from "../../utils";
-import { addTagsAppSettings, editReview, getAppSetting } from "../repository";
+import { checkAuth, createAppSettingsAndUserSend, } from "../../utils";
+import { addTagsAppSettingsEdit, editReview } from "../repository";
 
 require("dotenv").config();
 
@@ -18,10 +12,11 @@ const router = express.Router();
 
 const singleUpload = UploadFileAmazonCloud(process.env.AWS_PUBLIC_BUCKET_ARTICLE_IMG).single('file')
 
-router.post<Empty, AppSettingsResponseType | ErrorResponseType, Empty>(`${Path.Root}`, singleUpload, checkAuth, async (req: Request<Empty, Empty, DataReviewType & { idReview: string }, Empty> & { file: any }, res) => {
+router.post<Empty, ResponseAppType<Empty>, Empty>(`${Path.Root}`, singleUpload, checkAuth, async (req: Request<Empty, Empty, DataReviewType & { idReview: string }, Empty> & { file: any }, res) => {
         try {
             const payload = req.body
-            await addTagsAppSettings(payload.tags.split(','))
+            const id = req.body.id
+            await addTagsAppSettingsEdit(payload.tags.split(','), payload.idReview)
             if (req.file) {
                 await singleUpload(req, res, async function (err) {
                     if (req.file?.location) {
@@ -35,13 +30,12 @@ router.post<Empty, AppSettingsResponseType | ErrorResponseType, Empty>(`${Path.R
             } else {
                 await editReview(payload)
             }
-            const appSettings = await getAppSetting()
+            const { user, appSettings } = await createAppSettingsAndUserSend(id)
 
-            return res.status(200).send({ appSettings });
+            return res.status(200).send({ user, appSettings });
         } catch
             (error) {
-            console.log(error.message)
-            console.log(error)
+
             return res.status(401).send({ message: ErrorMessage.ServerError })
         }
     }

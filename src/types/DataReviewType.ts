@@ -1,4 +1,4 @@
-import { Nullable } from "./Nullable";
+import { Nullable } from "types";
 
 export type DataReviewType = {
     idUser: string;

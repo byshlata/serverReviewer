@@ -10,14 +10,14 @@ export const checkAuth = async (req, res, next) => {
             const user = await getUserById(decodedToken)
             if (user && user.status === Status.Block) {
 
-                return res.status(403).send({
+                return res.clearCookie(Secret.NameToken).status(403).send({
                     message: ErrorMessage.Block,
                     auth: false
                 })
             }
             if (!user) {
 
-                return res.status(404).send({
+                return res.clearCookie(Secret.NameToken).status(404).send({
                     message: ErrorMessage.UserNotFound,
                     auth: false
                 })

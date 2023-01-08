@@ -12,9 +12,10 @@ const router = express.Router();
 
 const singleUpload = UploadFileAmazonCloud(process.env.AWS_PUBLIC_BUCKET_ARTICLE_IMG).single('file')
 
-router.post<Empty, ResponseAppType<Empty>, DataReviewType & IdType, Empty>(`${ Path.Root }`, singleUpload, checkAuth, async (req: Request<Empty, Empty, DataReviewType, Empty> & { file: any }, res) => {
+router.post<Empty, ResponseAppType<Empty>, DataReviewType & IdType, Empty>(`${Path.Root}`, singleUpload, checkAuth, async (req: Request<Empty, Empty, DataReviewType, Empty> & { file: any }, res) => {
         try {
             const payload = req.body
+            const id = req.body.id
             if (req.file) {
                 await singleUpload(req, res, async function (err) {
                     if (req.file?.location) {
@@ -29,11 +30,12 @@ router.post<Empty, ResponseAppType<Empty>, DataReviewType & IdType, Empty>(`${ P
                 await createReview(payload)
             }
             await addTagsAppSettings(payload.tags.split(','))
-            const { user, appSettings } = await createAppSettingsAndUserSend(req.body.id)
+            const { user, appSettings } = await createAppSettingsAndUserSend(id)
 
-            return res.send({ appSettings, user });
+            return res.send({ user, appSettings });
         } catch
             (error) {
+
             return res.status(401).send({ message: ErrorMessage.ServerError })
         }
     }

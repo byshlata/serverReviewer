@@ -1,14 +1,14 @@
 import { getAppSetting, loginUser } from "../repository";
 import express from "express";
 import { Empty, LoginType, ResponseAppType } from "types";
-import { ErrorMessage, Path, Secret } from '../../enums/'
+import { ErrorMessage, Path, Secret, Status } from '../../enums/'
 import { loginValidation } from '../../validation/authValidation'
 import { validationResult } from 'express-validator'
 import { createCookieOption, createTokenAndUserSend } from "../../utils";
 
 const router = express.Router();
 
-router.post<Empty, ResponseAppType<Empty>, LoginType, Empty>(`${ Path.Root }`, loginValidation, async (req, res) => {
+router.post<Empty, ResponseAppType<Empty>, LoginType, Empty>(`${Path.Root}`, loginValidation, async (req, res) => {
     try {
         const errors = validationResult(req.body);
         if (!errors.isEmpty()) {
@@ -21,8 +21,8 @@ router.post<Empty, ResponseAppType<Empty>, LoginType, Empty>(`${ Path.Root }`, l
             const { user, token } = createTokenAndUserSend(userBase)
             const appSettings = await getAppSetting()
 
-            return user.status === 'block'
-                ? res.status(403).send({
+            return user.status === Status.Block
+                ? res.status(403).clearCookie(Secret.NameToken).send({
                     message: ErrorMessage.Block,
                     auth: false
                 })

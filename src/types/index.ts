@@ -87,3 +87,5 @@ export type { UsersSomeSendType } from './UsersSomeSendType'
 export type { UserSendShortType } from './UserSendShortType'
 
 export type { TagQueryParamsType } from './TagQueryParamsType'
+
+export type { RatingType } from './RatingType'

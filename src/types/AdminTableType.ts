@@ -1,5 +1,4 @@
-import { StatusType } from "types/StatusType";
-import { RightsType } from "types/RightsType";
+import { StatusType, RightsType } from "types";
 
 export type AdminTableType = {
     idUser: string;

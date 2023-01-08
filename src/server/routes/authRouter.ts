@@ -1,5 +1,5 @@
 import express from "express";
-import { Empty, ErrorResponseType, IdType, ResponseAppType } from "types";
+import { Empty, IdType, ResponseAppType } from "types";
 import { ErrorMessage, Path, Secret } from '../../enums'
 import { checkAuth, createCookieOption, createTokenAndUserSend } from "../../utils";
 import { getAppSetting, getUserById } from "../repository";
@@ -16,8 +16,8 @@ router.get<Empty, ResponseAppType<Empty>, IdType, Empty>(`${Path.Root}`, checkAu
                 user,
                 appSettings
             })
-            : res.cookie(Secret.NameToken, 0, createCookieOption()).status(200).send({
-                user,
+            : res.clearCookie(Secret.NameToken).status(200).send({
+                user: null,
                 appSettings
             })
     } catch (error) {

@@ -8,7 +8,7 @@ import { createCookieOption, createTokenAndUserSend } from "../../utils";
 
 const router = express.Router();
 
-router.post<Empty, ResponseAppType<Empty>, RegistrationType, Empty>(`${ Path.Root }`, registerValidation, async (req, res) => {
+router.post<Empty, ResponseAppType<Empty>, RegistrationType, Empty>(`${Path.Root}`, registerValidation, async (req, res) => {
     try {
         const errors = validationResult(req.body);
         if (!errors.isEmpty()) {

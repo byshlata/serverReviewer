@@ -12,6 +12,7 @@ router.post<Empty, ResponseAppType<Empty>, RegistrationType, Empty>(`${Path.Root
     try {
         const errors = validationResult(req.body);
         if (!errors.isEmpty()) {
+
             return res.status(400).send({ message: ErrorMessage.CorrectEnter })
         }
         const email = req.body.email;
@@ -26,6 +27,7 @@ router.post<Empty, ResponseAppType<Empty>, RegistrationType, Empty>(`${Path.Root
             .status(200)
             .send({ user, appSettings })
     } catch (error) {
+
         return res.status(400).send({ message: ErrorMessage.EmailIsUse })
     }
 });

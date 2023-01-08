@@ -1,3 +1,5 @@
+import exp from "constants";
+
 export { checkAuth } from './checkAuth'
 
 export { throwError } from './throwError'
@@ -35,3 +37,7 @@ export { createAdminTableResponse } from './createAdminTableResponse'
 export { createCategory } from './createCategory'
 
 export { createAppSettingsAndUserSend } from './createAppSettingsAndUserSend'
+
+export { checkUser } from './checkUser'
+
+export { changeNewTagsByEdit } from './changeNewTagsByEdit'

@@ -1,5 +1,5 @@
 export {
-    getAppSetting, addTagsAppSettings, addCategoryAppSettings, addAppSettings
+    getAppSetting, addTagsAppSettings, addCategoryAppSettings, addAppSettings, addTagsAppSettingsEdit
 } from './repositoryApp'
 
 export {

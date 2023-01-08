@@ -1,4 +1,4 @@
-import { AppSettingsSendType } from "types/AppSettingsSendType";
+import { AppSettingsSendType } from "types";
 
 export type AppSettingsServerType = AppSettingsSendType & {
     _id: string;

@@ -3,7 +3,6 @@ import express from "express";
 import { ErrorMessage, Path } from '../../enums'
 import { checkAuth, createAppSettingsAndUserSend } from "../../utils";
 import { addCategoryAppSettings } from "../repository";
-import {} from "utils/createAppSettingsAndUserSend";
 
 
 const router = express.Router();

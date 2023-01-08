@@ -1,4 +1,4 @@
-import { ReviewServerType } from "types/ReviewServerType";
+import { ReviewServerType } from "types";
 
 export type ReviewResponseType =  {
     review: ReviewServerType;

@@ -18,7 +18,6 @@ const users = require('./routes/usersRouter')
 const getUser = require('./routes/userRouter')
 const appSettings = require('./routes/appSettingsRouter')
 
-
 const { config } = require('dotenv')
 
 require("dotenv").config();

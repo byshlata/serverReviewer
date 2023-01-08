@@ -6,9 +6,6 @@ export enum ErrorMessage {
     ServerError = 'Server error',
     Success = 'Success',
     Authorized = 'You are not authorized',
-    DeleteUsers = 'Some error delete user',
     DeleteUserInBase = 'You have been deleted from the database or someone has deleted you',
-    BlockUserInBase = 'You have been blocked from the database or someone has blocked you',
-    UpdateUsers = 'Some error update user',
     Block = 'You are blocked',
 }

@@ -1,4 +1,4 @@
-import { SearchReviewType } from "./SearchReviewType";
+import { SearchReviewType } from "types";
 
 export type SearchResponseType = {
     searchResult: SearchReviewType[]

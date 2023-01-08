@@ -1,7 +1,8 @@
 import {
     AppSettingsResponseType,
     DataCommentType,
-    Empty, ErrorResponseType,
+    Empty,
+    ErrorResponseType,
     IdSomeType,
     IdType,
     LikeType,
@@ -17,13 +18,14 @@ import express, { Request } from "express";
 import { ErrorMessage, Path, QueryAPI } from '../../enums'
 import {
     checkAuth,
+    checkUser,
     createAppSettingsAndUserSend,
     createReviewSend,
     createUserReviewsTableResponse
 } from "../../utils";
 import {
     addComment,
-    deleteSomeReviews, getAppSetting,
+    deleteSomeReviews,
     getReviewsById,
     getReviewsUser,
     searchByReview,
@@ -34,45 +36,48 @@ import {
 
 const router = express.Router();
 
-router.get<Empty, AppSettingsResponseType  & ReviewResponseType | ErrorResponseType, IdType, Empty>(`${Path.Root}${Path.Id}`, async (req: Request<{ id: string }>, res) => {
+router.get<Empty, ResponseAppType<ReviewResponseType>, IdType, Empty>(`${Path.Root}${Path.Id}`, checkUser, async (req: Request<{ id: string }>, res) => {
         try {
             const { id } = req.params
             const reviewBase = await getReviewsById(id)
             const review = createReviewSend(reviewBase)
-            const appSettings = await getAppSetting()
+            const { user, appSettings } = await createAppSettingsAndUserSend(req.body.id)
 
-            return res.send({ appSettings, review});
+            return res.send({ user, appSettings, review });
         } catch
             (error) {
+
             return res.status(401).send({ message: ErrorMessage.ServerError })
         }
     }
 );
 
-router.get<Empty, ReviewsSomeSendType<ReviewUserTableType> & AppSettingsResponseType | ErrorResponseType, IdType, Empty>(`${Path.User}${Path.Root}${Path.Id}`, async (req: Request<{ id: string }>, res) => {
+router.get<Empty, ResponseAppType<ReviewsSomeSendType<ReviewUserTableType>>, IdType, Empty>(`${Path.User}${Path.Root}${Path.Id}`, checkUser, async (req: Request<{ id: string }>, res) => {
         try {
             const { id } = req.params
             const reviewsBase = await getReviewsUser(id)
             const reviews = createUserReviewsTableResponse(reviewsBase)
-            const appSettings = await getAppSetting()
+            const { user, appSettings } = await createAppSettingsAndUserSend(req.body.id)
 
-            return res.send({ appSettings, reviews});
+            return res.send({ user, appSettings, reviews });
         } catch
             (error) {
+
             return res.status(401).send({ message: ErrorMessage.ServerError })
         }
     }
 );
 
-router.post<Empty, SearchResponseType & AppSettingsResponseType | ErrorResponseType, IdType, Empty>(`${Path.Root}`, async (req: Request<Empty, Empty, IdType, SearchQueryParamsType>, res) => {
+router.post<Empty, ResponseAppType<SearchResponseType> & AppSettingsResponseType | ErrorResponseType, IdType, Empty>(`${Path.Root}`, checkUser, async (req: Request<Empty, Empty, IdType, SearchQueryParamsType>, res) => {
         try {
             const { query } = req
             const searchResult = await searchByReview(query[QueryAPI.Search])
-            const appSettings = await getAppSetting()
+            const { user, appSettings } = await createAppSettingsAndUserSend(req.body.id)
 
-            return res.send({ searchResult, appSettings });
+            return res.send({ user, searchResult, appSettings });
         } catch
             (error) {
+
             return res.status(401).send({ message: ErrorMessage.ServerError })
         }
     }
@@ -90,6 +95,7 @@ router.post<Empty, ResponseAppType<Empty>, LikeType & IdType, Empty>(`${Path.Lik
             })
         } catch
             (error) {
+
             return res.status(401).send({ message: ErrorMessage.ServerError })
         }
     }
@@ -107,6 +113,7 @@ router.post<Empty, ResponseAppType<Empty>, StarType & IdType, Empty>(`${Path.Sta
             })
         } catch
             (error) {
+
             return res.status(401).send({ message: ErrorMessage.ServerError })
         }
     }
@@ -128,6 +135,7 @@ router.post<Empty, ResponseAppType<ReviewResponseType>, DataCommentType, Empty>(
             }
         } catch
             (error) {
+
             return res.status(401).send({ message: ErrorMessage.Authorized })
         }
     }
@@ -137,12 +145,13 @@ router.delete<Empty, ResponseAppType<ReviewsSomeSendType<ReviewUserTableType>>, 
         try {
             const { idSome, id } = req.body;
             const reviewsBase = await deleteSomeReviews({ idSome, id })
-            const reviews= createUserReviewsTableResponse(reviewsBase)
+            const reviews = createUserReviewsTableResponse(reviewsBase)
             const { user, appSettings } = await createAppSettingsAndUserSend(id)
 
             return res.status(200).send({ user, appSettings, reviews });
         } catch
             (error) {
+
             return res.status(401).send({ message: ErrorMessage.ServerError })
         }
     }

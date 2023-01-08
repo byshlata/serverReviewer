@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose';
-import { ReviewRatingStarType } from "../types/ReviewRatingStarType";
+import { ReviewRatingStarType } from "types";
 
 export const RatingStarSchema = new Schema<ReviewRatingStarType>({
     averageRating: { type: Number, required: true, default: 0 },

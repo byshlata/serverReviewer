@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose';
-import { ReviewRatingLikeType } from "types/ReviewRatingLikeType";
+import { ReviewRatingLikeType } from "types";
 
 export const RatingLikeSchema = new Schema<ReviewRatingLikeType>({
     countLike: { type: Number, required: true, default: 0 },

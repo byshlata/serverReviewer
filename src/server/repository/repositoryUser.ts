@@ -107,6 +107,7 @@ export const deleteSomeUsers = async ({
                                       }: IdSomeType): Promise<UserServerType[]> => {
     try {
         await User.deleteMany({ _id: { $in: idSome } })
+
         return await getUsers()
     } catch (error) {
         throwError()
@@ -119,8 +120,9 @@ export const changeStatusUsers = async ({
     try {
         const users = await User.find({ _id: { $in: idSome } }).lean()
         for (let i = 0; i < users.length; i += 1) {
-            await changeStatus({id: users[i]._id })
+            await changeStatus({ id: users[i]._id })
         }
+
         return await getUsers()
     } catch (error) {
         throwError()
@@ -133,8 +135,9 @@ export const changeRightsUsers = async ({
     try {
         const users = await User.find({ _id: { $in: idSome } })
         for (let i = 0; i < users.length; i += 1) {
-            await changeRights({id: users[i]._id })
+            await changeRights({ id: users[i]._id })
         }
+
         return await getUsers()
     } catch (error) {
         throwError()
@@ -163,6 +166,7 @@ const changeRights = async ({ id }: IdType): Promise<UserServerType> => {
         } else {
             user.rights = Rights.User
         }
+
         return await user.save()
     } catch (error) {
         throwError()

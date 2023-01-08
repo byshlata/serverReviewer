@@ -12,7 +12,8 @@ export const createReviewSend = (review: ReviewServerType): any => {
         {
             ...reviewSend,
             author: change_IdById(reviewSend.author),
-            comments: [ ...changeAuthorComments ]
+            comments: [...changeAuthorComments]
         }
+
     return change_IdById(changeAuthorReview)
 }

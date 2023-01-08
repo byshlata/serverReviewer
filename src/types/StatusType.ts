@@ -1,3 +1,3 @@
-import { Status } from "../enums/status";
+import { Status } from "enums";
 
 export type StatusType = Status.Active | Status.Block
