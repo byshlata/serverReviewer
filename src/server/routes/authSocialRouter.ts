@@ -1,10 +1,15 @@
-import { createUser, getAppSetting, getUserByEmail } from "../repository";
+import { createUser, getAppSetting, getUserByEmail, getUserById } from "../repository";
 import express from "express";
 import { Empty, RegistrationType, ResponseAppType } from "types";
 import { ErrorMessage, Path, Secret, Status } from "../../enums";
 import { registerValidation } from '../../validation/authValidation'
 import { validationResult } from 'express-validator'
-import { createCookieOption, createTokenAndUserSend } from "../../utils";
+import {
+    createCookieOption,
+    createToken,
+    createTokenAndUserSend,
+    createUserSend
+} from "../../utils";
 
 const router = express.Router();
 
@@ -19,17 +24,16 @@ router.post<Empty, ResponseAppType<Empty>, RegistrationType, Empty>(`${Path.Root
         if (!userBase) {
             userBase = await createUser({ login, password, email, avatar })
         }
-
-        const { user, token } = createTokenAndUserSend(userBase)
         const appSettings = await getAppSetting()
-        return user && user.status !== Status.Block
-            ? res.cookie(Secret.NameToken, token, createCookieOption()).status(200).send({
-                user,
-                appSettings
+
+        return userBase && userBase.status !== Status.Block
+            ? res.status(200).cookie(Secret.NameToken, createToken(userBase._id), createCookieOption()).send({
+                user: createUserSend(userBase),
+                appSettings,
             })
             : res.clearCookie(Secret.NameToken, createCookieOption()).status(200).send({
                 user: null,
-                appSettings
+                appSettings,
             })
 
     } catch (error) {

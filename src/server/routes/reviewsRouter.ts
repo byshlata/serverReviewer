@@ -17,7 +17,7 @@ import {
 import {
     checkUser,
     createAppSettingsAndUserSend, createCookieOption,
-    createReviewSendShort
+    createReviewSendShort, createUserSend
 } from "../../utils";
 import { ReviewsGetType } from "types/ReviewsGetType";
 
@@ -47,27 +47,23 @@ router.get<Empty, ResponseAppType<ReviewsGetType<ReviewSendShortType[]>>, IdType
             const reviewsSortData = reviewsSortDataBase.map(review => createReviewSendShort(review))
             const reviewsSortRating = reviewsSortRatingBase.map(review => createReviewSendShort(review))
             const reviewsTag = reviewsTagBase.map(review => createReviewSendShort(review))
-            const appSettings = await getAppSetting()
             const userBase = await getUserById(req.body.id)
-            if (!userBase || userBase.status === Status.Block) {
-                return res.clearCookie(Secret.NameToken, createCookieOption()).status(200).send({
+            const appSettings = await getAppSetting()
+            return userBase && userBase.status !== Status.Block
+                ? res.status(200).send({
+                    user: createUserSend(userBase),
+                    appSettings,
+                    reviewsSortData,
+                    reviewsSortRating,
+                    reviewsTag
+                })
+                : res.clearCookie(Secret.NameToken, createCookieOption()).status(200).send({
                     user: null,
                     appSettings,
                     reviewsSortData,
                     reviewsSortRating,
                     reviewsTag
                 })
-            } else {
-                const { user, appSettings } = await createAppSettingsAndUserSend(req.body.id)
-
-                return res.status(200).send({
-                    user: user,
-                    appSettings,
-                    reviewsSortData,
-                    reviewsSortRating,
-                    reviewsTag
-                });
-            }
         } catch
             (error) {
 

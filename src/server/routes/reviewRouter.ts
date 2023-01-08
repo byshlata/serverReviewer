@@ -20,7 +20,7 @@ import {
     checkAuth,
     checkUser,
     createAppSettingsAndUserSend, createCookieOption,
-    createReviewSend,
+    createReviewSend, createTokenAndUserSend,
     createUserReviewsTableResponse, createUserSend
 } from "../../utils";
 import {
@@ -69,9 +69,20 @@ router.get<Empty, ResponseAppType<ReviewsSomeSendType<ReviewUserTableType>>, IdT
             const { id } = req.params
             const reviewsBase = await getReviewsUser(id)
             const reviews = createUserReviewsTableResponse(reviewsBase)
-            const { user, appSettings } = await createAppSettingsAndUserSend(req.body.id)
+            const userBase = await getUserById(req.body.id)
+            const appSettings = await getAppSetting()
+            return userBase && userBase.status !== Status.Block
+                ? res.status(200).send({
+                    user: createUserSend(userBase),
+                    appSettings,
+                    reviews
+                })
+                : res.clearCookie(Secret.NameToken, createCookieOption()).status(200).send({
+                    user: null,
+                    appSettings,
+                    reviews
+                })
 
-            return res.send({ user, appSettings, reviews });
         } catch
             (error) {
 
@@ -80,13 +91,23 @@ router.get<Empty, ResponseAppType<ReviewsSomeSendType<ReviewUserTableType>>, IdT
     }
 );
 
-router.post<Empty, ResponseAppType<SearchResponseType> & AppSettingsResponseType | ErrorResponseType, IdType, Empty>(`${Path.Root}`, checkUser, async (req: Request<Empty, Empty, IdType, SearchQueryParamsType>, res) => {
+router.post<Empty, ResponseAppType<SearchResponseType>, IdType, Empty>(`${Path.Root}`, checkUser, async (req: Request<Empty, Empty, IdType, SearchQueryParamsType>, res) => {
         try {
             const { query } = req
             const searchResult = await searchByReview(query[QueryAPI.Search])
-            const { user, appSettings } = await createAppSettingsAndUserSend(req.body.id)
-
-            return res.send({ user, searchResult, appSettings });
+            const userBase = await getUserById(req.body.id)
+            const appSettings = await getAppSetting()
+            return userBase && userBase.status !== Status.Block
+                ? res.status(200).send({
+                    user: createUserSend(userBase),
+                    appSettings,
+                    searchResult
+                })
+                : res.clearCookie(Secret.NameToken, createCookieOption()).status(200).send({
+                    user: null,
+                    appSettings,
+                    searchResult
+                })
         } catch
             (error) {
 
