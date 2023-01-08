@@ -15,19 +15,19 @@ import {
     StarType,
 } from "../../types";
 import express, { Request } from "express";
-import { ErrorMessage, Path, QueryAPI } from '../../enums'
+import { ErrorMessage, Path, QueryAPI, Secret, Status } from '../../enums'
 import {
     checkAuth,
     checkUser,
-    createAppSettingsAndUserSend,
+    createAppSettingsAndUserSend, createCookieOption,
     createReviewSend,
-    createUserReviewsTableResponse
+    createUserReviewsTableResponse, createUserSend
 } from "../../utils";
 import {
     addComment,
-    deleteSomeReviews,
+    deleteSomeReviews, getAppSetting,
     getReviewsById,
-    getReviewsUser,
+    getReviewsUser, getUserById,
     searchByReview,
     setLike,
     setStar
@@ -41,9 +41,21 @@ router.get<Empty, ResponseAppType<ReviewResponseType>, IdType, Empty>(`${Path.Ro
             const { id } = req.params
             const reviewBase = await getReviewsById(id)
             const review = createReviewSend(reviewBase)
-            const { user, appSettings } = await createAppSettingsAndUserSend(req.body.id)
+            const userBase = await getUserById(req.body.id)
+            const appSettings = await getAppSetting()
 
-            return res.send({ user, appSettings, review });
+            return userBase && userBase.status !== Status.Block
+                ? res.status(200).send({
+                    user: createUserSend(userBase),
+                    appSettings,
+                    review
+                })
+                : res.clearCookie(Secret.NameToken, createCookieOption()).status(200).send({
+                    user: null,
+                    appSettings,
+                    review
+                })
+
         } catch
             (error) {
 

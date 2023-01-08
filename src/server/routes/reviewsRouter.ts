@@ -16,7 +16,7 @@ import {
 } from "../repository";
 import {
     checkUser,
-    createAppSettingsAndUserSend,
+    createAppSettingsAndUserSend, createCookieOption,
     createReviewSendShort
 } from "../../utils";
 import { ReviewsGetType } from "types/ReviewsGetType";
@@ -50,7 +50,7 @@ router.get<Empty, ResponseAppType<ReviewsGetType<ReviewSendShortType[]>>, IdType
             const appSettings = await getAppSetting()
             const userBase = await getUserById(req.body.id)
             if (!userBase || userBase.status === Status.Block) {
-                return res.clearCookie(Secret.NameToken).status(200).send({
+                return res.clearCookie(Secret.NameToken, createCookieOption()).status(200).send({
                     user: null,
                     appSettings,
                     reviewsSortData,

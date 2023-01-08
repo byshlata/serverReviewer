@@ -22,7 +22,7 @@ router.post<Empty, ResponseAppType<Empty>, LoginType, Empty>(`${Path.Root}`, log
             const appSettings = await getAppSetting()
 
             return user.status === Status.Block
-                ? res.status(403).clearCookie(Secret.NameToken).send({
+                ? res.status(403).clearCookie(Secret.NameToken, createCookieOption()).send({
                     message: ErrorMessage.Block,
                     auth: false
                 })
