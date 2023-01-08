@@ -26,13 +26,8 @@ router.post<Empty, ResponseAppType<Empty>, RegistrationType, Empty>(`${Path.Root
         }
         const appSettings = await getAppSetting()
 
-        return userBase && userBase.status !== Status.Block
-            ? res.status(200).cookie(Secret.NameToken, createToken(userBase._id), createCookieOption()).send({
+        return res.status(200).cookie(Secret.NameToken, createToken(userBase._id), createCookieOption()).send({
                 user: createUserSend(userBase),
-                appSettings,
-            })
-            : res.status(200).send({
-                user: null,
                 appSettings,
             })
 
