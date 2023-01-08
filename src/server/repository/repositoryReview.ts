@@ -95,7 +95,6 @@ export const sortByData = async ({
                                  }: { count?: number, sort: any }): Promise<ReviewServerType[]> => {
     try {
         const reviews = await Review.find({}).sort({ createdAt: sort }).populate('author')
-
         return count ? reviews.slice(0, count) : reviews
     } catch (error) {
         throwError()

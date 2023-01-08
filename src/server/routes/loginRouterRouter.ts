@@ -29,15 +29,13 @@ router.post<Empty, ResponseAppType<Empty>, LoginType, Empty>(`${Path.Root}`, log
                 user: createUserSend(userBase),
                 appSettings,
             })
-            : res.clearCookie(Secret.NameToken, createCookieOption()).status(200).send({
-                user: null,
-                appSettings,
+            : res.clearCookie(Secret.NameToken, createCookieOption()).status(404).send({
+                message: ErrorMessage.EmailOrPassword
             })
 
-        return res.status(400).send({ message: ErrorMessage.EmailOrPassword })
     } catch (error) {
-
-        return res.status(500).send({ message: ErrorMessage.ServerError })
+        console.log(error)
+        return res.status(500).send({ message: ErrorMessage.EmailOrPassword })
     }
 });
 

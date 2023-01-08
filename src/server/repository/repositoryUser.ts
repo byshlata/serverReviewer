@@ -31,7 +31,6 @@ export const getUserPasswordByEmail = async (email: string): Promise<UserServerT
 
 export const getUserById = async (id: string): Promise<UserServerType> => {
     try {
-
         return await User.findById(id);
     } catch (error) {
         throwError()

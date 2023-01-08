@@ -16,8 +16,9 @@ import {
 } from "../repository";
 import {
     checkUser,
-    createAppSettingsAndUserSend, createCookieOption,
-    createReviewSendShort, createUserSend
+    createCookieOption,
+    createReviewSendShort,
+    createUserSend
 } from "../../utils";
 import { ReviewsGetType } from "types/ReviewsGetType";
 
@@ -44,9 +45,11 @@ router.get<Empty, ResponseAppType<ReviewsGetType<ReviewSendShortType[]>>, IdType
             if (query[QueryAPI.Tag]) {
                 reviewsTagBase = await searchByTag(query[QueryAPI.Tag])
             }
+
             const reviewsSortData = reviewsSortDataBase.map(review => createReviewSendShort(review))
             const reviewsSortRating = reviewsSortRatingBase.map(review => createReviewSendShort(review))
             const reviewsTag = reviewsTagBase.map(review => createReviewSendShort(review))
+
             const userBase = await getUserById(req.body.id)
             const appSettings = await getAppSetting()
             return userBase && userBase.status !== Status.Block
@@ -66,7 +69,6 @@ router.get<Empty, ResponseAppType<ReviewsGetType<ReviewSendShortType[]>>, IdType
                 })
         } catch
             (error) {
-
             return res.status(401).send({ message: ErrorMessage.ServerError })
         }
     }
